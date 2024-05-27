@@ -1,122 +1,170 @@
-
-
-
 import React, { useState, useEffect } from 'react';
-import { getUsers, updateUser } from '../../APIs/api'; 
+import { getRoles, getUsers, updateUser , deleteUser } from '../../APIs/api';
+import PageHeader from '../../components/common/PageHeader';
 
 const UserList = () => {
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editedUser, setEditedUser] = useState({});
+    const [users, setUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editedUser, setEditedUser] = useState({});
+    const [allRoles, setAllRoles] = useState([]);
 
-  // Fetch users from API when component mounts
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await getUsers();
-        setUsers(response.data.users);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
+    useEffect(() => {
+        const fetchUsersAndRoles = async () => {
+            try {
+                const [usersResponse, rolesResponse] = await Promise.all([getUsers(), getRoles()]);
+                setUsers(usersResponse?.data?.users);
+                setAllRoles(rolesResponse?.data?.roles);
+            } catch (error) {
+                console.error('Error fetching users and roles:', error);
+            }
+        };
+        fetchUsersAndRoles();
+    }, []);
+
+    const handleUserSelect = (user) => {
+        setSelectedUser(user);
+        setEditedUser({ ...user, roles: user?.roles?.map(role => role._id) });
+        setShowEditModal(true);
     };
-    fetchUsers();
-  }, []);
 
-  // Function to handle user selection and open modal
-  const handleUserSelect = (user) => {
-    setSelectedUser(user);
-    setShowEditModal(true);
-    setEditedUser({ ...user });
-  };
+    const handleDeleteUser = async (selected) => {
 
-  // Function to handle editing user
-  const handleEditUser = async () => {
-    try {
-      const response = await updateUser(selectedUser._id, editedUser);
-      if (response.data.success) {
-        // Update user list with edited user
-        const updatedUsers = users.map((user) =>
-          user._id === selectedUser._id ? editedUser : user
-        );
-        setUsers(updatedUsers);
-        // Close modal
-        setShowEditModal(false);
-        setSelectedUser(null);
-        setEditedUser({});
-      }
-    } catch (error) {
-      console.error('Error updating user:', error);
+        try {
+            const response = await deleteUser(selected);
+            if (response?.data?.success) {
+                const updatedUsers = users.filter(user => user._id !== selected);
+                setUsers(updatedUsers);
+                setSelectedUser(null);
+
+            } else {
+                console.error('Error deleting user:', response?.data?.error);
+            }
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
+
     }
-  };
+    const handleEditUser = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await updateUser(selectedUser?._id, editedUser);
+            if (response?.data?.success) {
+                const updatedUser = response?.data?.updatedUser;
+                const updatedUsers = users.map((user) =>
+                    user?._id === selectedUser?._id ? updatedUser : user
+                );
+                setUsers(updatedUsers);
+                setShowEditModal(false);
+                setSelectedUser(null);
+                setEditedUser({});
+            } else {
+                alert(response.message)
+            }
+        } catch (error) {
+            console.error('Error updating user:', error);
+        }
+    };
 
-  return (
-    <div>
-      <h2>User Table</h2>
-      <div className="table-responsive">
-      <table className='table bg-no w-100'>
-        <thead className='border-bottom'>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Roles</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id}>
-              <td>{user.firstName}</td>
-              <td>{user.lastName}</td>
-              <td>{user.email}</td>
-              <td>{user.roles}</td>
-              <td>
-                <button onClick={() => handleUserSelect(user)}>Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      </div>
 
-      {showEditModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setShowEditModal(false)}>
-              &times;
-            </span>
-            <h2>Edit User</h2>
-            <label>First Name:</label>
-            <input
-              type="text"
-              value={editedUser.firstName}
-              onChange={(e) =>
-                setEditedUser({ ...editedUser, firstName: e.target.value })
-              }
-            />
-            <label>Last Name:</label>
-            <input
-              type="text"
-              value={editedUser.lastName}
-              onChange={(e) =>
-                setEditedUser({ ...editedUser, lastName: e.target.value })
-              }
-            />
-            <label>Email:</label>
-            <input
-              type="text"
-              value={editedUser.email}
-              onChange={(e) =>
-                setEditedUser({ ...editedUser, email: e.target.value })
-              }
-            />
-            <button onClick={handleEditUser}>Save</button>
-          </div>
+    const handleRoleChange = (roleId) => {
+        const updatedRoles = editedUser?.roles?.includes(roleId)
+            ? editedUser?.roles?.filter(role => role !== roleId)
+            : [...editedUser?.roles, roleId];
+        setEditedUser({ ...editedUser, roles: updatedRoles });
+    };
+
+    return (
+        <div>
+            <PageHeader headerTitle="Manage Users" />
+            <div className='d-flex flex-column justify-content-center align-items-center w-100'>
+                <div className="table-responsive">
+                    <table className='table bg-no w-100'>
+                        <thead className='border-bottom'>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Roles</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users?.map((user) => (
+                                <tr key={user?._id}>
+                                    <td>{user?.firstName}</td>
+                                    <td>{user?.lastName}</td>
+                                    <td>{user?.email}</td>
+                                    <td className='w-50'>
+                                        <ul>
+                                            {user?.roles?.map((role) => (
+                                                <li key={role?._id}>
+                                                    <strong>{role?.roleName}:</strong> {role?.permissions?.join(', ')}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </td>
+                                    <td >
+                                        <div className='d-flex gap-2'>
+                                            <button className="btn btn-warning text-white" onClick={() => handleUserSelect(user)}>Edit</button>
+                                            <button className="btn btn-warning text-white" onClick={() => handleDeleteUser(user._id)}><i class="icofont-ui-delete"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {showEditModal && selectedUser && (
+                    <div className="modal-overlay position-absolute w-50 rounded-3 shadow-lg">
+                        <div className="modal-content bg-white d-flex flex-column align-items-center justify-content-center rounded-3 py-3 px-2">
+                            <form className='w-100' onSubmit={handleEditUser}>
+                                <div className='w-100 d-flex'>
+                                    <span className="close" onClick={() => setShowEditModal(false)}>
+                                        &times;
+                                    </span>
+                                    <h2 className='text-center w-100 fs-4 fw-semibold'>Edit User</h2>
+                                </div>
+                                <div className="w-75 mx-auto rounded-lg overflow-hidden">
+                                    <div className="d-flex">
+                                        <div className="w-25 text-black py-3 px-2">
+                                            <div className="d-flex flex-column gap-3">
+                                                <p className="mb-2">FIRST NAME</p>
+                                                <p className="mb-2">LAST NAME</p>
+                                                <p className="mb-2">EMAIL</p>
+                                                <p>ROLES</p>
+                                            </div>
+                                        </div>
+                                        <div className="w-75 px-3 py-2">
+                                            <div className="d-flex flex-column gap-2">
+                                                <input type="text" className="form-control" placeholder="Enter first name" value={editedUser?.firstName} onChange={(e) => setEditedUser({ ...editedUser, firstName: e.target.value })} />
+                                                <input type="text" className="form-control" value={editedUser?.lastName} onChange={(e) => setEditedUser({ ...editedUser, lastName: e.target.value })} placeholder="Enter last name" />
+                                                <input type="email" className="form-control" value={editedUser?.email} onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })} placeholder="Enter email" />
+                                                <div className="d-flex flex-column">
+                                                    {allRoles?.map((role) => (
+                                                        <label key={role?._id} className="form-check-label">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                checked={editedUser?.roles?.includes(role._id)}
+                                                                onChange={() => handleRoleChange(role._id)}
+                                                            />
+                                                            {role?.roleName}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" className="btn btn-primary mt-3">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default UserList;

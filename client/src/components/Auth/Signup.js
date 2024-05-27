@@ -28,7 +28,7 @@ function Signup (){
         }
         const response= await signup(first,last,email,password,termsAccepted,confirmPassword,termsAccepted)
 
-        if(response.data.sucess){
+        if(response.data.success){
             alert('response.data.message')
         }
     }

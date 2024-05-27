@@ -111,9 +111,21 @@ export const getUsers=async()=>{
     }
 }
 
-export const updateUser=async()=>{
+export const updateUser=async(id,details)=>{
     try {
+        if(details?.roles?.length<1){
+            return {message:'Roles must contain atleast one role'}
+        }
+        const response=await Api.put(`/users/${id}`,{ firstName:details.firstName, lastName:details?.lastName, email:details?.email, roles:details?.roles })
+        return response
+    } catch (error) {
         
+    }
+}
+export const deleteUser=async(id)=>{
+    try {
+        const response=await Api.delete(`/users/${id}`)
+        return response
     } catch (error) {
         
     }

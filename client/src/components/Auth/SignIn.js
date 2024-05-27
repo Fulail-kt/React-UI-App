@@ -18,7 +18,7 @@ function SignIn (){
     const handleSignIn = async (e) => {
       e.preventDefault();
         const response= await signin(email,password)
-        if(response.data.sucess){
+        if(response.data.success){
           const token=response.data.token
           localStorage.setItem('token',token)
           history.push(`${process.env.PUBLIC_URL}`)

@@ -17,7 +17,7 @@ const RolesList = () => {
     const fetchRoles = async () => {
       try {
         const response = await getRoles();
-        if (response?.data?.sucess) {
+        if (response?.data?.success) {
           setRoles(response?.data.roles);
         }
       } catch (error) {
@@ -47,7 +47,7 @@ const RolesList = () => {
   const handleDeleteClick = async (roleId) => {
     try {
       const response = await deleteRole(roleId);
-      if (response?.data?.sucess) {
+      if (response?.data?.success) {
         setRoles(roles.filter(role => role._id !== roleId));
       }
     } catch (error) {
@@ -60,13 +60,13 @@ const RolesList = () => {
       if (isCreating) {
         console.log(role,"role")
         const response = await createRole(role);
-        if (response?.data?.sucess) {
+        if (response?.data?.success) {
           setRoles([...roles, response.data.newRole]);
           setIsCreating(false);
         }
       } else {
         const response = await updateRoleAndPermission(editRole._id, role);
-        if (response?.data?.sucess) {
+        if (response?.data?.success) {
           setRoles(roles.map(r => (r._id === editRole._id ? role : r)));
           setEditRole(null);
         }

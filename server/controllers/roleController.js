@@ -5,18 +5,18 @@ export const createRole = async (req, res) => {
   try {
     const newRole = new roleModel({ roleName, permissions });
     await newRole.save();
-    res.status(201).json({newRole,message:'Role created successfully',sucess:true});
+    res.status(201).json({newRole,message:'Role created successfully',success:true});
   } catch (err) {
-    res.status(500).json({ error: err.message,sucess:false });
+    res.status(500).json({ error: err.message,success:false });
   }
 };
 
 export const getRoles = async (req, res) => {
   try {
     const roles = await roleModel.find();
-    res.status(200).json({roles,sucess:true});
+    res.status(200).json({roles,success:true});
   } catch (err) {
-    res.status(500).json({ error: err.message,sucess:false });
+    res.status(500).json({ error: err.message,success:false });
   }
 };
 
@@ -26,7 +26,7 @@ export const updateRole = async (req, res) => {
   console.log(req.body,req.params)
   try {
     const updatedRole = await roleModel.findByIdAndUpdate(id, { roleName, permissions }, { new: true });
-    res.status(200).json({updatedRole,message:'Role updated successfully',sucess:true});
+    res.status(200).json({updatedRole,message:'Role updated successfully',success:true});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -36,8 +36,8 @@ export const deleteRole = async (req, res) => {
   const { id } = req.params;
   try {
     await roleModel.findByIdAndDelete(id);
-    res.status(200).json({ message: 'Role deleted successfully' ,sucess:true });
+    res.status(200).json({ message: 'Role deleted successfully' ,success:true });
   } catch (err) {
-    res.status(500).json({ error: err.message,sucess:false });
+    res.status(500).json({ error: err.message,success:false });
   }
 };
