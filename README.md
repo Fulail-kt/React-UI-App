@@ -30,14 +30,15 @@ This project is a Management system implemented using ReactJS for the frontend a
    ```sh
     cd server
     npm install
-   
+   ```
 
-  ```sh
-   cd client
-   npm install
+   ```sh
+    cd client
+    npm install
    ```
 
 3. SetUp .env file
+
    Server
    ```sh
     JWT_SECRET="jwt-secret"
