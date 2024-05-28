@@ -120,11 +120,9 @@ const UserList = () => {
                     <div className="modal-overlay position-absolute w-50 rounded-3 shadow-lg">
                         <div className="modal-content bg-white d-flex flex-column align-items-center justify-content-center rounded-3 py-3 px-2">
                             <form className='w-100' onSubmit={handleEditUser}>
-                                <div className='w-100 d-flex'>
-                                    <span className="close" onClick={() => setShowEditModal(false)}>
-                                        &times;
-                                    </span>
+                                <div className='w-100 position-relative d-flex'>
                                     <h2 className='text-center w-100 fs-4 fw-semibold'>Edit User</h2>
+                                    
                                 </div>
                                 <div className="w-75 mx-auto rounded-lg overflow-hidden">
                                     <div className="d-flex">
@@ -158,7 +156,10 @@ const UserList = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-primary mt-3">Save</button>
+                                <div className=' w-100 d-flex gap-5 justify-content-center'><button type="submit" className="btn btn-primary mt-3">Save</button> 
+                                <button className="close  btn btn-danger mt-3 text-white" onClick={() => setShowEditModal(false)}>
+                                    close</button>
+                                </div>
                             </form>
                         </div>
                     </div>
