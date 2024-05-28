@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getRoles, getUsers, updateUser , deleteUser } from '../../APIs/api';
+import { getRoles, getUsers, updateUser, deleteUser } from '../../APIs/api';
 import PageHeader from '../../components/common/PageHeader';
 
 const UserList = () => {
@@ -104,14 +104,15 @@ const UserList = () => {
                                             ))}
                                         </ul>
                                     </td>
-                                    <td >
+                                    <td>
                                         <div className='d-flex gap-2'>
-                                            <button className="btn btn-warning text-white" onClick={() => handleUserSelect(user)}>Edit</button>
-                                            <button className="btn btn-warning text-white" onClick={() => handleDeleteUser(user._id)}><i class="icofont-ui-delete"></i></button>
+                                            <button className="btn btn-warning text-white" disabled={user?.roles.some(role => role.roleName === "Admin")} onClick={() => handleUserSelect(user)}>Edit</button>
+                                            <button className="btn btn-warning text-white" disabled={user?.roles.some(role => role.roleName === "Admin")} onClick={() => handleDeleteUser(user._id)}><i className="icofont-ui-delete"></i></button>
                                         </div>
                                     </td>
                                 </tr>
                             ))}
+
                         </tbody>
                     </table>
                 </div>

@@ -98,9 +98,11 @@ const RolesList = () => {
                 <tr key={role?._id} className="py-3">
                   <td>{role?.roleName}</td>
                   <td>{role?.permissions.join(', ')}</td>
-                  <td className='d-flex gap-1'>
-                    <button className="btn btn-warning text-white" onClick={() => handleEditClick(role._id)}>Edit</button>
-                    <button className="btn btn-warning text-white" onClick={() => handleDeleteClick(role._id)}><i class="icofont-ui-delete"></i></button>
+                  <td className=' '>
+                  <div className='d-flex gap-1'>
+                    <button className="btn btn-warning text-white" disabled={role?.roleName === "Admin"} onClick={() => handleEditClick(role._id)}>Edit</button>
+                      <button className="btn btn-warning text-white" disabled={role?.roleName === "Admin"} onClick={() => handleDeleteClick(role._id)}><i class="icofont-ui-delete"></i></button>
+                  </div>
                   </td>
                 </tr>
               ))}

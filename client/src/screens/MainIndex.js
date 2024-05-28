@@ -58,6 +58,7 @@ import Help from "./Dashboard/Help";
 import RolesList from "./Roles/RoleManagement";
 import UserList from "./User/UserList";
 import PermissionCheck from "../protected/permissionCheck";
+import TokenAccess from "../protected/tokenAccess";
 
 function MainIndex(props) {
 
@@ -68,57 +69,37 @@ function MainIndex(props) {
             {activekey !== "/chat-app" ? activekey === "/documentation" ? <PageHeader1 /> : <Header /> : ""}
             <div className="body d-flex py-lg-3 py-md-2">
                 <Routes>
-                    <Route exact path={`/`} element={<HrDashboard />} />
-                    <Route exact path='/hr-dashboard' element={<HrDashboard />} />
-                    <Route exact path={`/project-dashboard`} element={<ProjectDashboard />} />
-
+                    <Route path="/" element={<TokenAccess><HrDashboard /></TokenAccess>} />
+                    <Route path="/hr-dashboard" element={<TokenAccess><HrDashboard /></TokenAccess>} />
+                    <Route path="/project-dashboard" element={<TokenAccess><ProjectDashboard /></TokenAccess>} />
 
                     <Route exact path={`/projects`} element={<PermissionCheck allowedRole="Projects"> <Projects />  </PermissionCheck>} />
-
                     <Route exact path={`/tasks`} element={<PermissionCheck allowedRole='Tasks'> <Tasks /> </PermissionCheck>} />
-
-
                     <Route exact path={`/timesheet`} element={<PermissionCheck allowedRole='Timesheet'> <Timesheet /> </PermissionCheck>} />
-
-
                     <Route exact path={`/leaders`} element={<PermissionCheck allowedRole='Leaders'> <Leaders /> </PermissionCheck>} />
-
-
-                    <Route exact path={`/tickets-view`} element={<TicketsView />} />
-                    <Route exact path={`/tickets-detail`} element={<TicketsDetail />} />
-
-
+                    <Route path="/tickets-view" element={<TokenAccess><TicketsView /></TokenAccess>} />
+                    <Route path="/tickets-detail" element={<TokenAccess><TicketsDetail /></TokenAccess>} />
                     <Route exact path={`/clients`} element={<PermissionCheck allowedRole='Clients'> <Clients /> </PermissionCheck>} />
-
-
                     <Route exact path={`/client-profile`} element={<PermissionCheck allowedRole='Client Profile'> <ClientProfile /> </PermissionCheck>} />
-
-
-
                     <Route exact path={`/members`} element={<PermissionCheck allowedRole='Members'> <Members /> </PermissionCheck>} />
-
-
-                    <Route exact path={`/members-profile`} element={<EmployeeProfile />} />
-
-
+                    <Route exact path={`/members-profile`} element={<TokenAccess><EmployeeProfile /></TokenAccess>} />
                     <Route exact path={`/holidays`} element={<PermissionCheck allowedRole='Holidays'> <Holidays /> </PermissionCheck>} />
-
-
-                    <Route exact path={`/attendance-employees`} element={<AttendanceEmployees />} />
-
+                    <Route exact path={`/attendance-employees`} element={<TokenAccess><AttendanceEmployees /></TokenAccess>} />
                     <Route exact path={`/attendance`} element={<PermissionCheck allowedRole='Attendance'> <Attendance /> </PermissionCheck>} />
 
 
-                    <Route exact path={`/leave-request`} element={<LeaveRequest />} />
-                    <Route exact path={`/department`} element={<Departments />} />
-                    <Route exact path={`/invoices`} element={<Invoices />} />
-                    <Route exact path={`/payments`} element={<Payments />} />
-                    <Route exact path={`/expenses`} element={<Expenses />} />
-                    <Route exact path={`/employee-salary`} element={<Salaryslip />} />
-                    <Route exact path={`/calander`} element={<Calendar />} />
-                    <Route exact path={`/chat-app`} element={<ChatApp />} />
+                    <Route path="/leave-request" element={<TokenAccess><LeaveRequest /></TokenAccess>} />
+                    <Route path="/department" element={<TokenAccess><Departments /></TokenAccess>} />
+                    <Route path="/invoices" element={<TokenAccess><Invoices /></TokenAccess>} />
+                    <Route path="/payments" element={<TokenAccess><Payments /></TokenAccess>} />
+                    <Route path="/expenses" element={<TokenAccess><Expenses /></TokenAccess>} />
+                    <Route path="/employee-salary" element={<TokenAccess><Salaryslip /></TokenAccess>} />
+                    <Route path="/calendar" element={<TokenAccess><Calendar /></TokenAccess>} />
+                    <Route path="/chat-app" element={<TokenAccess><ChatApp /></TokenAccess>} />
 
-                    <Route exact path={`/roles`} element={ <PermissionCheck allowedRole='Roles'> <RolesList /> </PermissionCheck>} />
+                    {/* NEW ROUTES */}
+
+                    <Route exact path={`/roles`} element={<PermissionCheck allowedRole='Roles'> <RolesList /> </PermissionCheck>} />
                     <Route exact path={`/users`} element={<PermissionCheck allowedRole='Users'> <UserList />  </PermissionCheck>} />
 
                     <Route exact path={`/apex-charts`} element={<ApexCharts />} />

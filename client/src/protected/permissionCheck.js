@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getRole } from '../APIs/api';
 
 const PermissionCheck = ({ children, allowedRole }) => {
@@ -8,7 +8,7 @@ const PermissionCheck = ({ children, allowedRole }) => {
   const [permissions, setPermissions] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const location = useLocation();
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchUserRole = async () => {
