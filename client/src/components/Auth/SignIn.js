@@ -1,32 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { Link , useHistory} from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import GoogleImg from "../../assets/images/google.svg";
 import { signin } from "../../APIs/api";
 
 function SignIn (){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const history=useHistory()
+    const navigate=useNavigate()
+
     
     useEffect(()=>{
         const token=localStorage.getItem('token')
 
         if(token){
-            history.push(`${process.env.PUBLIC_URL}`)
+            window.location.href = `${process.env.PUBLIC_URL}/hr-dashboard`;
         }
     },[])
     const handleSignIn = async (e) => {
       e.preventDefault();
         const response= await signin(email,password)
-        if(response.data.success){
-          const token=response.data.token
+        if(response?.data?.success){
+          const token=response?.data?.token
           localStorage.setItem('token',token)
-          history.push(`${process.env.PUBLIC_URL}`)
-        }else{
-  
+          window.location.href = `${process.env.PUBLIC_URL}/hr-dashboard`;
+        }else if (response?.data?.success==false){
+            alert(response?.data?.error)
+        }
         }
      
-    };
+    
 
 
 
@@ -77,7 +79,7 @@ function SignIn (){
                             <button type="submit" className="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin">SIGN IN</button>
                         </div>
                         <div className="col-12 text-center mt-4">
-                            <span className="text-muted">Don't have an account yet? <Link to="sign-up" className="text-secondary">Sign up here</Link></span>
+                            <span className="text-muted">Don't have an account yet? <Link to={`${process.env.PUBLIC_URL}/sign-up`} className="text-secondary">Sign up here</Link></span>
                         </div>
                     </form>
                 </div>

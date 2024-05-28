@@ -4,6 +4,8 @@ import menu  from "../Data/menu.json";
 import menu2 from "../Data/menu2.json";
 import { useState } from "react";
 import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { getRole } from "../../APIs/api";
 console.log("menu",menu);
 function Sidebar(props) {
 
@@ -11,12 +13,59 @@ function Sidebar(props) {
     const [menuData, setMenuData] = useState([...menu?.menu]);
     const [darkLightMode, setDarkLightMode] = useState("light");
     const [updateRtl, setUpdateRtl] = useState(false);
-    
+    const [roles, setRoles] = React.useState([]);
+    const [permissions, setPermissions] = React.useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const decoded = jwtDecode(token);
+                    const userRoles = Array.isArray(decoded.role) ? decoded.role : [decoded.role];
+
+                    // Check for admin role
+                    const isAdmin = userRoles.includes('Admin');
+
+                    // Fetch roles and permissions if not admin
+                    if (!isAdmin) {
+                        const roleResponse = await getRole(userRoles);
+                        if (roleResponse.data && roleResponse.data.success) {
+                            const { roles, permissions } = roleResponse.data;
+                            setPermissions(permissions);
+
+                            // Filter menu items based on user permissions
+                            const filteredMenuData = menu.menu.reduce((acc, item) => {
+                                if (item.children && item.children.length > 0) {
+                                    const filteredChildren = item.children.filter(child => permissions.includes(child.name));
+                                    if (filteredChildren.length > 0) {
+                                        acc.push({ ...item, children: filteredChildren });
+                                    }
+                                }
+                                return acc;
+                            }, []);
+                            
+                            setMenuData(filteredMenuData);
+                        }
+                    } else {
+                        // If user is admin, show all menu items
+                        setMenuData(menu.menu);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching roles and permissions:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     useEffect(() => {
         window.document.children[0].setAttribute("data-theme", "light");
 
     }, []);
 
+   
     function openChildren(id) {
         var otherTabs = document.getElementsByClassName("has-children")
         if (otherTabs) {
@@ -96,6 +145,16 @@ function Sidebar(props) {
             document.body.classList.add("rtl_mode");
         }
         setUpdateRtl(!updateRtl);
+    }
+
+    const handleLogout=()=>{
+        try {
+            localStorage.removeItem('token')
+            window.location.href = `${process.env.PUBLIC_URL}/sign-in`;
+
+        } catch (error) {
+            
+        }
     }
     const { activekey } = props;
     return (
@@ -180,6 +239,7 @@ function Sidebar(props) {
                         </div>
                     </li>
                 </ul>
+                 <div className="w-100 d-flex py-2 justify-content-center "><button className="bg-body-secondary border-0 px-2 py-1 rounded-2" onClick={handleLogout}>Logout</button></div>
                 <button type="button" className="btn btn-link sidebar-mini-btn text-light" onClick={() => { setIsSidebarMini(!isSidebarMini) }}>
                     <span className="ms-2"><i className="icofont-bubble-right"></i></span>
                 </button>

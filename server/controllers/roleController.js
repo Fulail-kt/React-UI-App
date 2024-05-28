@@ -19,6 +19,27 @@ export const getRoles = async (req, res) => {
     res.status(500).json({ error: err.message,success:false });
   }
 };
+export const getRole = async (req, res) => {
+  try {
+    const { role } = req.params;
+    
+    let roles = [];
+
+    const rolesArray = role.split(',').map(r => r.trim());
+
+    roles = await roleModel.find({ roleName: { $in: rolesArray } });
+
+    const permissions = roles.flatMap(role => role.permissions || []);
+
+    const uniquePermissions = [...new Set(permissions)];
+
+
+    res.status(200).json({ roles, permissions: uniquePermissions, success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message, success: false });
+  }
+};
+
 
 export const updateRole = async (req, res) => {
   const { id } = req.params;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { signup } from "../../APIs/api";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 
 function Signup (){
 
@@ -11,12 +11,12 @@ function Signup (){
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [termsAccepted, setTermsAccepted] = useState(false);
-    const history=useHistory()
+    const history=useNavigate()
 
     useEffect(()=>{
         const token=localStorage.getItem('token')
         if(token){
-         history.push(`${process.env.PUBLIC_URL}`)
+            window.location.href = `${process.env.PUBLIC_URL}/`;
         }
     },[])
 
@@ -26,10 +26,13 @@ function Signup (){
             alert('required field is missing') 
             return
         }
-        const response= await signup(first,last,email,password,termsAccepted,confirmPassword,termsAccepted)
+        const response= await signup(first,last,email,password,confirmPassword,termsAccepted)
 
-        if(response.data.success){
-            alert('response.data.message')
+        if(response?.data?.success){
+            alert(response?.data?.message)
+            window.location.href = `${process.env.PUBLIC_URL}/sign-in`;
+        }else if (response?.data?.success==false) {
+            alert(response?.data?.message)
         }
     }
     
@@ -83,7 +86,7 @@ function Signup (){
                             <button type="submit" className="btn btn-lg btn-block btn-light lift text-uppercase" >SIGN UP</button>
                         </div>
                         <div className="col-12 text-center mt-4">
-                            <span className="text-muted">Already have an account? <Link to="sign-in" title="Sign in" className="text-secondary">Sign in here</Link></span>
+                            <span className="text-muted">Already have an account? <Link to={`${process.env.PUBLIC_URL}/sign-in`} title="Sign in" className="text-secondary">Sign in here</Link></span>
                         </div>
                     </form>
                 </div>

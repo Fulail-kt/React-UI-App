@@ -37,6 +37,7 @@ export const signin = async (email, password) => {
         throw new Error('Password must be at least 8 characters long');
       }
 
+      console.log(password,confim,"chcke")
       if (password !== confim) {
           alert("Passwords do not match.");
           return;
@@ -62,6 +63,14 @@ export const signin = async (email, password) => {
 export const getRoles=async()=>{
     try {
         const response=await Api.get('/roles')
+        return response
+    } catch (error) {
+        throw error; 
+    }
+}
+export const getRole=async(role)=>{
+    try {
+        const response=await Api.get(`/role/${role}`)
         return response
     } catch (error) {
         throw error; 

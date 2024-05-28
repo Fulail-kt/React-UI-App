@@ -1,13 +1,14 @@
 import express from 'express';
 const router = express.Router();
 import { createUser, getUsers, updateUser, deleteUser, login } from '../controllers/userController.js';
-import { createRole, getRoles, updateRole, deleteRole } from '../controllers/roleController.js';
+import { createRole, getRoles, getRole, updateRole, deleteRole } from '../controllers/roleController.js';
 import auth from '../middleware/auth.js';
 
 
 
 router.post('/create-role', createRole);
 router.get('/roles', getRoles);
+router.get('/role/:role', getRole);
 router.put('/roles/:id',auth, updateRole);
 router.delete('/roles/:id',auth, deleteRole);
 
