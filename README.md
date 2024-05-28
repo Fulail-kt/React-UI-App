@@ -24,13 +24,13 @@ This project is a Management system implemented using ReactJS for the frontend a
 
    ```sh
      https://github.com/Fulail-kt/React-UI-App
-   ```sh
+  
 
 2. Install dependencies for frontend and backend:
    ```sh
     cd server
     npm install
-   ```sh
+   
 
   ```sh
    cd client
