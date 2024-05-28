@@ -1,91 +1,119 @@
 import React, { useEffect, useState } from "react";
-import { Link , useNavigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 import GoogleImg from "../../assets/images/google.svg";
 import { signin } from "../../APIs/api";
 
-function SignIn (){
+function SignIn() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigate=useNavigate()
+    const [loading, setLoading] = useState(true);
+    const [signInLoading, setSignInLoading] = useState(false);
+   
 
-    
-    useEffect(()=>{
-        const token=localStorage.getItem('token')
-
-        if(token){
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
             window.location.href = `${process.env.PUBLIC_URL}/hr-dashboard`;
+        } else {
+            setLoading(false); // Set loading to false once token check is done
         }
-    },[])
+    }, []);
+
+
     const handleSignIn = async (e) => {
-      e.preventDefault();
-        const response= await signin(email,password)
-        if(response?.data?.success){
-          const token=response?.data?.token
-          localStorage.setItem('token',token)
-          window.location.href = `${process.env.PUBLIC_URL}/hr-dashboard`;
-        }else if (response?.data?.success==false){
-            alert(response?.data?.error)
+        e.preventDefault();
+        setSignInLoading(true);
+        try {
+            const response = await signin(email, password);
+            if (response?.data?.success) {
+                const token = response?.data?.token;
+                localStorage.setItem('token', token);
+                window.location.href = `${process.env.PUBLIC_URL}/hr-dashboard`;
+            } else if (response?.data?.success === false) {
+                alert(response?.data?.error);
+            }
+        } catch (error) {
+            alert('An error occurred during sign-in.');
+            console.error(error);
+        } finally {
+            setSignInLoading(false);
         }
-        }
-     
-    
+    };
 
+    if(loading){
+        return <div className="w-50 h-100 d-flex justify-content-center align-items-center"> <h1>Loading..</h1> </div>
+    }
 
-
-  
-        return(
-            <div className="col-lg-6 d-flex justify-content-center align-items-center border-0 rounded-lg auth-h100">
-                <div className="w-100 p-3 p-md-5 card border-0 bg-dark text-light" style={{maxWidth: "32rem"}}>
-                    <form className="row g-1 p-3 p-md-4 " onSubmit={handleSignIn}>
-                        <div className="col-12 text-center mb-1 mb-lg-5">
-                            <h1>Sign in</h1>
-                            <span>Free access to our dashboard.</span>
+    return (
+        <div className="col-lg-6 d-flex justify-content-center align-items-center border-0 rounded-lg auth-h100">
+            <div className="w-100 p-3 p-md-5 card border-0 bg-dark text-light" style={{ maxWidth: "32rem" }}>
+                <form className="row g-1 p-3 p-md-4" onSubmit={handleSignIn}>
+                    <div className="col-12 text-center mb-1 mb-lg-5">
+                        <h1>Sign in</h1>
+                        <span>Free access to our dashboard.</span>
+                    </div>
+                    <div className="col-12 text-center mb-4">
+                        <a className="btn btn-lg btn-outline-secondary btn-block" href="#!">
+                            <span className="d-flex justify-content-center align-items-center">
+                                <img className="avatar xs me-2" src={GoogleImg} alt="Google Icon" />
+                                Sign in with Google
+                            </span>
+                        </a>
+                        <span className="dividers text-muted mt-4">OR</span>
+                    </div>
+                    <div className="col-12">
+                        <div className="mb-2">
+                            <label className="form-label">Email address</label>
+                            <input 
+                                type="email" 
+                                onChange={(e) => setEmail(e.target.value)} 
+                                className="form-control form-control-lg" 
+                                placeholder="name@example.com" 
+                                disabled={signInLoading}
+                            />
                         </div>
-                        <div className="col-12 text-center mb-4">
-                            <a className="btn btn-lg btn-outline-secondary btn-block" href="#!">
-                                <span className="d-flex justify-content-center align-items-center">
-                                    <img className="avatar xs me-2" src={GoogleImg} alt="Imag Description" />
-                                    Sign in with Google
+                    </div>
+                    <div className="col-12">
+                        <div className="mb-2">
+                            <div className="form-label">
+                                <span className="d-flex justify-content-between align-items-center">
+                                    Password
+                                    <Link className="text-secondary" to="password-reset">Forgot Password?</Link>
                                 </span>
-                            </a>
-                            <span className="dividers text-muted mt-4">OR</span>
-                        </div>
-                        <div className="col-12">
-                            <div className="mb-2">
-                                <label className="form-label">Email address</label>
-                                <input type="email" onChange={(e)=>setEmail(e.target.value)} className="form-control form-control-lg" placeholder="name@example.com" />
                             </div>
+                            <input 
+                                type="password" 
+                                className="form-control form-control-lg" 
+                                onChange={(e) => setPassword(e.target.value)} 
+                                placeholder="***************" 
+                                disabled={signInLoading}
+                            />
                         </div>
-                        <div className="col-12">
-                            <div className="mb-2">
-                                <div className="form-label">
-                                    <span className="d-flex justify-content-between align-items-center">
-                                        Password
-                                        <Link className="text-secondary" to="password-reset">Forgot Password?</Link>
-                                    </span>
-                                </div>
-                                <input type="password" className="form-control form-control-lg" onChange={(e)=>setPassword(e.target.value)} placeholder="***************" />
-                            </div>
+                    </div>
+                    <div className="col-12">
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <label className="form-check-label" htmlFor="flexCheckDefault">
+                                Remember me
+                            </label>
                         </div>
-                        <div className="col-12">
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                <label className="form-check-label" for="flexCheckDefault">
-                                    Remember me
-                                </label>
-                            </div>
-                        </div>
-                        <div className="col-12 text-center mt-4">
-                            <button type="submit" className="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin">SIGN IN</button>
-                        </div>
-                        <div className="col-12 text-center mt-4">
-                            <span className="text-muted">Don't have an account yet? <Link to={`${process.env.PUBLIC_URL}/sign-up`} className="text-secondary">Sign up here</Link></span>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div className="col-12 text-center mt-4">
+                        <button 
+                            type="submit" 
+                            className="btn btn-lg btn-block btn-light lift text-uppercase" 
+                            disabled={signInLoading}
+                        >
+                            {signInLoading ? 'Signing in...' : 'SIGN IN'}
+                        </button>
+                    </div>
+                    <div className="col-12 text-center mt-4">
+                        <span className="text-muted">Don't have an account yet? <Link to={`${process.env.PUBLIC_URL}/sign-up`} className="text-secondary">Sign up here</Link></span>
+                    </div>
+                </form>
             </div>
-        )
-
+        </div>
+    );
 }
 
 export default SignIn;

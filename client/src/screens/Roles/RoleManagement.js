@@ -10,7 +10,7 @@ const RolesList = () => {
   const [isCreating, setIsCreating] = useState(false);
 
   const permissions = [
-    'Projects', 'Tasks', 'Timesheet', 'Leaders', 'Our Clients', 'Clients', 'Client Profile', 'Employees', 'Members', 'Holidays', 'Attendance'
+    'Projects', 'Tasks', 'Timesheet', 'Leaders', 'Our Clients', 'Clients', 'Client Profile', 'Employees', 'Members', 'Holidays', 'Attendance','Users','Roles'
   ];
 
   useEffect(() => {

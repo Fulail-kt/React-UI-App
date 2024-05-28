@@ -11,14 +11,17 @@ function Signup (){
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [termsAccepted, setTermsAccepted] = useState(false);
-    const history=useNavigate()
+    
+    const [loading, setLoading] = useState(true);
 
-    useEffect(()=>{
-        const token=localStorage.getItem('token')
-        if(token){
-            window.location.href = `${process.env.PUBLIC_URL}/`;
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            window.location.href = `${process.env.PUBLIC_URL}/hr-dashboard`;
+        } else {
+            setLoading(false);
         }
-    },[])
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,6 +37,10 @@ function Signup (){
         }else if (response?.data?.success==false) {
             alert(response?.data?.message)
         }
+    }
+
+    if(loading){
+        return <div className="w-50 h-100 d-flex justify-content-center align-items-center"> <h1>Loading..</h1> </div>
     }
     
         return(
