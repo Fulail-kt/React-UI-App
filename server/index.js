@@ -13,7 +13,7 @@ const app = express();
 connectDB();
 
 // Init Middleware
-app.use(cors({origin:'*'}))
+app.use(cors({origin:process.env.FRONTEND_URL}))
 app.use(express.json());
 
 app.get('/', (req, res) => res.send('API Running'));
